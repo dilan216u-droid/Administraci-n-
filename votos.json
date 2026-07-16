@@ -62,5 +62,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "191.97.8.190",
     "fecha_registro": "2026-07-16T19:41:31.454Z"
+  },
+  {
+    "id": 9,
+    "usuario_discord": "agustinnosecuanto",
+    "opcion_marcada": "Soporte Técnico",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "181.43.92.118",
+    "fecha_registro": "2026-07-16T23:00:08.528Z"
   }
 ]
