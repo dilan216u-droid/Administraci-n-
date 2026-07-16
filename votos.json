@@ -6,5 +6,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "45.181.126.86",
     "fecha_registro": "2026-07-16T02:29:06.847Z"
+  },
+  {
+    "id": 2,
+    "usuario_discord": "paradise.notforme",
+    "opcion_marcada": "Moderador",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "66.9.161.95",
+    "fecha_registro": "2026-07-16T02:39:46.035Z"
   }
 ]
