@@ -54,5 +54,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "188.216.215.138",
     "fecha_registro": "2026-07-16T15:43:20.492Z"
+  },
+  {
+    "id": 8,
+    "usuario_discord": "Wilmar0712",
+    "opcion_marcada": "Administrador",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "191.97.8.190",
+    "fecha_registro": "2026-07-16T19:41:31.454Z"
   }
 ]
