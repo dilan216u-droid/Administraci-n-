@@ -46,5 +46,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "190.95.42.124",
     "fecha_registro": "2026-07-16T04:24:35.488Z"
+  },
+  {
+    "id": 7,
+    "usuario_discord": "until_thedark_comes",
+    "opcion_marcada": "Moderador",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "188.216.215.138",
+    "fecha_registro": "2026-07-16T15:43:20.492Z"
   }
 ]
