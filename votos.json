@@ -46,5 +46,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "190.97.228.133",
     "fecha_registro": "2026-07-16T04:08:07.817Z"
+  },
+  {
+    "id": 7,
+    "usuario_discord": "Aso",
+    "opcion_marcada": "Administrador",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "190.95.42.124",
+    "fecha_registro": "2026-07-16T04:24:35.488Z"
   }
 ]
