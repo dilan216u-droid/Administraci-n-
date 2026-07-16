@@ -38,5 +38,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "190.112.99.118",
     "fecha_registro": "2026-07-16T03:24:05.048Z"
+  },
+  {
+    "id": 6,
+    "usuario_discord": "holasoyluis_64388",
+    "opcion_marcada": "Supervisor de Geo-RP",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "190.97.228.133",
+    "fecha_registro": "2026-07-16T04:08:07.817Z"
   }
 ]
