@@ -1,13 +1,5 @@
 [
   {
-    "id": 1,
-    "usuario_discord": "Nakamura",
-    "opcion_marcada": "Supervisor de Geo-RP",
-    "tipo_eleccion": "Postulacion_Staff",
-    "ip_votante": "45.181.126.86",
-    "fecha_registro": "2026-07-16T02:29:06.847Z"
-  },
-  {
     "id": 2,
     "usuario_discord": "paradise.notforme",
     "opcion_marcada": "Moderador",
