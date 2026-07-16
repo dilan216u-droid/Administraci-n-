@@ -22,5 +22,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "187.146.237.54",
     "fecha_registro": "2026-07-16T02:40:44.613Z"
+  },
+  {
+    "id": 4,
+    "usuario_discord": "walmart03",
+    "opcion_marcada": "Soporte Técnico",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "167.0.229.203",
+    "fecha_registro": "2026-07-16T02:47:54.459Z"
   }
 ]
