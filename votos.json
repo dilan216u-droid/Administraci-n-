@@ -14,5 +14,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "66.9.161.95",
     "fecha_registro": "2026-07-16T02:39:46.035Z"
+  },
+  {
+    "id": 3,
+    "usuario_discord": "gabriel_xochitl",
+    "opcion_marcada": "Organizador de Eventos",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "187.146.237.54",
+    "fecha_registro": "2026-07-16T02:40:44.613Z"
   }
 ]
