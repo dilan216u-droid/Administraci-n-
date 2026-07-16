@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración y Resultados - Staff</title>
+    <style>
+        :root {
+            --discord-blurple: #5865F2;
+            --discord-dark: #23272A;
+            --discord-gray: #2C2F33;
+            --discord-light-gray: #99AAB5;
+            --discord-green: #57F287;
+            --discord-yellow: #FEE75C;
+            --discord-red: #ED4245;
+            --text-color: #FFFFFF;
+            --card-bg: #2f3136;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--discord-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--discord-gray);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #202225;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header h1 span {
+            background-color: var(--discord-blurple);
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Grid de Estadísticas Rápidas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid var(--discord-blurple);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card.green { border-left-color: var(--discord-green); }
+        .stat-card.yellow { border-left-color: var(--discord-yellow); }
+        .stat-card.red { border-left-color: var(--discord-red); }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: var(--discord-light-gray);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        /* Estructura Principal */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media(min-width: 900px) {
+            .main-layout {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        /* Secciones */
+        .panel {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--discord-gray);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .refresh-btn {
+            background-color: var(--discord-blurple);
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background-color: #4752C4;
+        }
+
+        /* Buscador e Inputs */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-bar input {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--discord-dark);
+            border: 1px solid #4f545c;
+            border-radius: 4px;
+            color: white;
+        }
+
+        /* Tabla de Postulaciones */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--discord-dark);
+            color: var(--discord-light-gray);
+            padding: 12px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid var(--discord-gray);
+            font-size: 0.95rem;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-admin { background-color: rgba(237, 66, 69, 0.2); color: var(--discord-red); }
+        .badge-mod { background-color: rgba(87, 242, 135, 0.2); color: var(--discord-green); }
+        .badge-tech { background-color: rgba(88, 101, 242, 0.2); color: var(--discord-blurple); }
+        .badge-event { background-color: rgba(254, 231, 92, 0.2); color: var(--discord-yellow); }
+
+        /* Lista de Distribución de Votos/Roles */
+        .distribution-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .distribution-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--discord-gray);
+        }
+
+        .distribution-item:last-child {
+            border-bottom: none;
+        }
+
+        .dist-role-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .dist-count {
+            background-color: var(--discord-dark);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--discord-light-gray);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🛡️ Portal Administrativo <span>Staff</span></h1>
+        <div>
+            <span style="color: var(--discord-light-gray); font-size: 0.9rem; margin-right: 15px;">Sesión segura de Administrador</span>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Tarjetas de Estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Total Postulaciones</div>
+                <div id="statTotal" class="stat-value">0</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-title">Roles de Moderación</div>
+                <div id="statMod" class="stat-value">0</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-title">Roles de Eventos</div>
+                <div id="statEvent" class="stat-value">00</div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-title">IPs Bloqueadas / Únicas</div>
+                <div id="statIps" class="stat-value">0</div>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            
+            <!-- Lista de Postulantes -->
+            <div class="panel">
+                <div class="panel-title">
+                    <span>Lista Completa de Postulaciones</span>
+                    <button class="refresh-btn" onclick="cargarPostulaciones()">🔄 Recargar Datos</button>
+                </div>
+
+                <div class="filter-bar">
+                    <input type="text" id="searchInput" oninput="filtrarTabla()" placeholder="Buscar por usuario de Discord, rol o país...">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Usuario Discord</th>
+                                <th>Rol Solicitado</th>
+                                <th>País</th>
+                                <th>Dirección IP</th>
+                                <th>Fecha Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCuerpo">
+                            <!-- Los datos se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                    <div id="sinDatos" class="no-data" style="display: none;">No se encontraron registros.</div>
+                </div>
+            </div>
+
+            <!-- Distribución Lateral -->
+            <div class="panel">
+                <div class="panel-title">Roles más Solicitados</div>
+                <ul class="distribution-list" id="listaDistribucion">
+                    <!-- Dinámico -->
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Esta función se conecta dinámicamente con tu API en Vercel para obtener "staff.json"
+        // Si no se han registrado postulaciones o hay error, mostrará ejemplos simulados para que veas cómo se ve.
+        async function cargarPostulaciones() {
+            const tabla = document.getElementById('tablaCuerpo');
+            const listaDist = document.getElementById('listaDistribucion');
+            tabla.innerHTML = '<tr><td colspan="6" class="no-data">Cargando postulaciones desde GitHub...</td></tr>';
+
+            try {
+                // Hacemos un GET al endpoint que lee staff.json
+                const res = await fetch('/api/get-staff'); // Este endpoint leerá tu staff.json
+                if (res.ok) {
+                    const datos = await res.json();
+                    actualizarInterfaz(datos);
+                } else {
+                    cargarSimulados();
+                }
+            } catch (error) {
+                console.log("No se pudo conectar a la API real, mostrando simulados de prueba.");
+                cargarSimulados();
+            }
+        }
+
+        let datosGlobales = [];
+
+        function actualizarInterfaz(datos) {
+            datosGlobales = datos;
+            const tabla = document.getElementById('tablaCuerpo');
+            const sinDatos = document.getElementById('sinDatos');
+            tabla.innerHTML = '';
+
+            if (!datos || datos.length === 0) {
+                sinDatos.style.display = 'block';
+                return;
+            } else {
+                sinDatos.style.display = 'none';
+            }
+
+            // Ordenar por ID descendente (más nuevos primero)
+            datos.sort((a, b) => b.id - a.id);
+
+            // Contadores para estadísticas
+            let total = datos.length;
+            let modCount = 0;
+            let eventCount = 0;
+            let ipsUnicas = new Set();
+            let conteoRoles = {};
+
+            datos.forEach(item => {
+                ipsUnicas.add(item.ip_votante);
+                
+                // Conteo de categorías
+                const rol = item.rol_solicitado;
+                conteoRoles[rol] = (conteoRoles[rol] || 0) + 1;
+
+                if (rol.includes('Moderador') || rol.includes('Supervisor')) {
+                    modCount++;
+                } else if (rol.includes('Eventos')) {
+                    eventCount++;
+                }
+
+                // Generar fila
+                const fila = document.createElement('tr');
+                
+                // Color badge según rol
+                let badgeClass = 'badge-tech';
+                if (rol.includes('Moderador')) badgeClass = 'badge-mod';
+                else if (rol.includes('Administrador')) badgeClass = 'badge-admin';
+                else if (rol.includes('Eventos')) badgeClass = 'badge-event';
+
+                const fechaFormateada = new Date(item.fecha_postulacion || item.fecha).toLocaleString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Enmascarar IP parcialmente por privacidad si es visualizado en público
+                const ipMostrar = item.ip_votante ? item.ip_votante.replace(/(\d+)\.(\d+)\.(\d+)\.(\d+)/, '$1.$2.***.***') : 'Oculta';
+
+                fila.innerHTML = `
+                    <td>${item.id}</td>
+                    <td style="font-weight: bold; color: var(--discord-blurple)">@${item.usuario_discord}</td>
+                    <td><span class="badge ${badgeClass}">${rol}</span></td>
+                    <td>📍 ${item.pais || item.region || 'N/A'}</td>
+                    <td style="font-family: monospace; color: var(--discord-light-gray)">${ipMostrar}</td>
+                    <td style="font-size: 0.85rem; color: var(--discord-light-gray)">${fechaFormateada}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+
+            // Actualizar Tarjetas
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statMod').innerText = modCount;
+            document.getElementById('statEvent').innerText = eventCount;
+            document.getElementById('statIps').innerText = ipsUnicas.size;
+
+            // Actualizar lista de distribución lateral
+            const listaDist = document.getElementById('listaDistribucion');
+            listaDist.innerHTML = '';
+            
+            // Ordenar roles de mayor a menor postulaciones
+            const rolesOrdenados = Object.entries(conteoRoles).sort((a, b) => b[1] - a[1]);
+            
+            rolesOrdenados.forEach(([nombreRol, cantidad]) => {
+                const li = document.createElement('li');
+                li.className = 'distribution-item';
+                
+                let emoji = '⚙️';
+                if (nombreRol.includes('Administrador')) emoji = '👑';
+                else if (nombreRol.includes('Moderador')) emoji = '🛡️';
+                else if (nombreRol.includes('Supervisor')) emoji = '👀';
+                else if (nombreRol.includes('Geo-RP')) emoji = '🗺️';
+                else if (nombreRol.includes('Eventos')) emoji = '🎉';
+
+                li.innerHTML = `
+                    <div class="dist-role-name"><span>${emoji}</span> ${nombreRol}</div>
+                    <div class="dist-count">${cantidad}</div>
+                `;
+                listaDist.appendChild(li);
+            });
+        }
+
+        // Datos simulados por si la base de datos está vacía al iniciar o para desarrollo local
+        function cargarSimulados() {
+            const simulados = [
+                { id: 1, usuario_discord: "Nico_02", rol_solicitado: "Administrador", pais: "Colombia", ip_votante: "186.115.42.10", fecha_postulacion: "2026-07-15T12:30:00.000Z" },
+                { id: 2, usuario_discord: "SantiGeo", rol_solicitado: "Supervisor de Geo-RP", pais: "Argentina", ip_votante: "190.220.11.85", fecha_postulacion: "2026-07-15T14:15:00.000Z" },
+                { id: 3, usuario_discord: "Sofii_M", rol_solicitado: "Moderador", pais: "España", ip_votante: "84.120.250.3", fecha_postulacion: "2026-07-15T15:02:00.000Z" },
+                { id: 4, usuario_discord: "DevAndres", rol_solicitado: "Técnico", pais: "México", ip_votante: "187.160.40.114", fecha_postulacion: "2026-07-15T15:45:00.000Z" },
+                { id: 5, usuario_discord: "Luffy_99", rol_solicitado: "Organizador de Eventos", pais: "Venezuela", ip_votante: "200.84.102.30", fecha_postulacion: "2026-07-15T18:10:00.000Z" }
+            ];
+            actualizarInterfaz(simulados);
+        }
+
+        function filtrarTabla() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filas = document.querySelectorAll('#tablaCuerpo tr');
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                const texto = fila.textContent.toLowerCase();
+                if (texto.includes(query)) {
+                    fila.style.display = '';
+                    visibles++;
+                } else {
+                    fila.style.display = 'none';
+                }
+            });
+
+            document.getElementById('sinDatos').style.display = visibles === 0 ? 'block' : 'none';
+        }
+
+        // Cargar al inicializar
+        window.onload = cargarPostulaciones;
+    </script>
+</body>
+</html>
+
