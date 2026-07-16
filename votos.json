@@ -30,5 +30,13 @@
     "tipo_eleccion": "Postulacion_Staff",
     "ip_votante": "167.0.229.203",
     "fecha_registro": "2026-07-16T02:47:54.459Z"
+  },
+  {
+    "id": 5,
+    "usuario_discord": "benjqq_32",
+    "opcion_marcada": "Administrador",
+    "tipo_eleccion": "Postulacion_Staff",
+    "ip_votante": "190.112.99.118",
+    "fecha_registro": "2026-07-16T03:24:05.048Z"
   }
 ]
