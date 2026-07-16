@@ -1,21 +1,41 @@
 module.exports = async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido' });
+  // Manejo de CORS por si tu backend y frontend están en dominios ligeramente distintos
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
 
-  const { usuario_discord, opcion_marcada, tipo_eleccion, region, ubicacion } = req.body;
-  
-  if (!usuario_discord || !opcion_marcada) {
-    return res.status(400).json({ error: 'Campos obligatorios faltantes (usuario o opción).' });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Método no permitido' });
+  }
+
+  const { usuario_discord, opcion_marcada, tipo_eleccion } = req.body;
+  
+  if (!usuario_discord || !opcion_marcada) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios (usuario o rol).' });
+  }
+
+  // Lectura de las variables que configuraste en Vercel
   const OWNER = process.env.GITHUB_USER;
   const REPO = process.env.GITHUB_REPO;
   const TOKEN = process.env.GITHUB_TOKEN;
-  const FILE_PATH = 'votos.json'; // Archivo centralizado de votos
+  const FILE_PATH = 'votos.json';
+
+  if (!OWNER || !REPO || !TOKEN) {
+    return res.status(500).json({ error: 'Las variables de entorno de GitHub no están configuradas en Vercel.' });
+  }
 
   try {
     const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
     
-    // 1. Intentar obtener el archivo votos.json existente
+    // 1. Intentar obtener el archivo votos.json
     const resGet = await fetch(url, {
       headers: { 
         'Authorization': `token ${TOKEN}`, 
@@ -36,9 +56,10 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: `Error al conectar con GitHub (Status ${resGet.status}).` });
     }
 
-    // 2. Capturar IP y verificar duplicados
+    // 2. Capturar IP del votante (Vercel provee la IP real en 'x-forwarded-for')
     const ip_votante = req.headers['x-forwarded-for']?.split(',')[0].trim() || req.socket.remoteAddress || 'IP_DESCONOCIDA';
 
+    // 3. Verificar duplicados por IP
     const yaVoto = votosActuales.some(voto => 
       voto.ip_votante === ip_votante && ip_votante !== 'IP_DESCONOCIDA'
     );
@@ -46,25 +67,23 @@ module.exports = async function handler(req, res) {
     if (yaVoto) {
       return res.status(403).json({ 
         error: 'Acceso denegado', 
-        mensaje: 'Ya se ha registrado un voto/postulación desde esta dirección IP.' 
+        mensaje: 'Ya se ha registrado un voto o postulación desde tu conexión de internet (IP).' 
       });
     }
 
-    // 3. Estructurar el nuevo voto
+    // 4. Estructurar el nuevo registro sin región
     const nuevoVoto = {
       id: votosActuales.length + 1,
       usuario_discord,
       opcion_marcada,
-      tipo_eleccion: tipo_eleccion || "Staff_Apply",
-      region: region || "No especificada",
-      ubicacion: ubicacion || "General",
+      tipo_eleccion: tipo_eleccion || "Postulacion_Staff",
       ip_votante,
       fecha_registro: new Date().toISOString()
     };
 
     votosActuales.push(nuevoVoto);
 
-    // 4. Guardar los cambios actualizados en GitHub
+    // 5. Enviar actualización a GitHub
     const nuevoContenidoBase64 = Buffer.from(JSON.stringify(votosActuales, null, 2)).toString('base64');
 
     const resPut = await fetch(url, {
@@ -76,21 +95,20 @@ module.exports = async function handler(req, res) {
         'User-Agent': 'Vercel-App'
       },
       body: JSON.stringify({
-        message: `🗳️ Nuevo voto registrado: ${usuario_discord}`,
+        message: `🗳️ Nuevo registro de voto: ${usuario_discord}`,
         content: nuevoContenidoBase64,
         sha: sha
       })
     });
 
     if (!resPut.ok) {
-      return res.status(500).json({ error: 'No se pudo escribir el voto en la base de datos.' });
+      return res.status(500).json({ error: 'No se pudo guardar el registro en la base de datos de GitHub.' });
     }
 
     return res.status(200).json({ OK: true });
 
   } catch (error) {
-    console.error("❌ Error en el guardado de votos:", error);
-    return res.status(500).json({ error: 'Error interno del servidor.' });
+    console.error("❌ Error en la API de votos:", error);
+    return res.status(500).json({ error: 'Error interno en el servidor de Vercel.' });
   }
 };
-        
